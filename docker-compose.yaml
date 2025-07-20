@@ -1,0 +1,24 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - rabbitmq
+    environment:
+      # Override these if you like, or mount your .env
+      - DATABASE_URL=sqlite+aiosqlite:///./bcn.db
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+      - SECRET_KEY=supersecretjwtkey
+    volumes:
+      - ./:/app             # so your code and bcn.db stay in sync
+
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"         # AMQP
+      - "15672:15672"       # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
